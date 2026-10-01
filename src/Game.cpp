@@ -10,7 +10,7 @@ Game::Game(sf::RenderWindow& game_window)
 
 Game::~Game()
 {
-
+	//hi
 }
 
 // We call this once after the game class is instantiated
