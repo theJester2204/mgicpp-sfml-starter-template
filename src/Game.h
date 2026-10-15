@@ -16,6 +16,15 @@ class Game
   void mouseButtonReleased(const sf::Event::MouseButtonReleased* event);
   void keyPressed(const sf::Event::KeyPressed* event);
   void keyReleased(const sf::Event::KeyReleased* event);
+  void newAnimal();
+
+  bool should_accept;
+
+  sf::Sprite* character;
+  sf::Sprite* passport;
+
+  sf::Texture* animals = new sf::Texture[3];
+  sf::Texture* passports = new sf::Texture[3];
 
  private:
   sf::RenderWindow& window;

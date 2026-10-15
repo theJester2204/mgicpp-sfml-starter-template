@@ -1,6 +1,7 @@
 
 #include "Game.h"
 #include <iostream>
+#include <random>
 
 Game::Game(sf::RenderWindow& game_window)
   : window(game_window)
@@ -10,14 +11,54 @@ Game::Game(sf::RenderWindow& game_window)
 
 Game::~Game()
 {
-	//hi
+	delete[] animals;
+	delete[] passports;
+	delete character;
+	delete passport;
 }
 
 // We call this once after the game class is instantiated
 bool Game::init()
 {
+	character = new sf::Sprite(animals[0]);
+	passport = new sf::Sprite(passports[0]);
 
-  return true;
+	//background
+	if (!background_texture.loadFromFile("../Data/Images/WhackaMole Worksheet/background.png"))
+	{
+		std::cout << "background did not load \n";
+	}
+	background.setTexture(background_texture, true);
+	//penguin
+	if (!animals[0].loadFromFile("../Data/Images/Critter Crossing/penguin.png"))
+	{
+		std::cout << "sprite did not load \n";
+	}
+	if (!passports[0].loadFromFile("../Data/Images/Critter Crossing/penguin passport.png"))
+	{
+		std::cout << "texture did not load \n";
+	}
+	//moose
+	if (!animals[1].loadFromFile("../Data/Images/Critter Crossing/moose.png"))
+	{
+		std::cout << "sprite did not load \n";
+	}
+	if (!passports[1].loadFromFile("../Data/Images/Critter Crossing/moose passport.png"))
+	{
+		std::cout << "texture did not load \n";
+	}
+	//elephant
+	if (!animals[2].loadFromFile("../Data/Images/Critter Crossing/elephant.png"))
+	{
+		std::cout << "sprite did not load \n";
+	}
+	if (!passports[2].loadFromFile("../Data/Images/Critter Crossing/elephant passport.png"))
+	{
+		std::cout << "texture did not load \n";
+	}
+
+	newAnimal();
+	return true;
 }
 
 // Update runs after event polling and before rendering
@@ -30,7 +71,9 @@ void Game::update(float dt)
 // Runs after update, use it to tell the window what to draw this frame
 void Game::render()
 {
-
+	window.draw(background);
+	window.draw(*character);
+	window.draw(*passport);
 }
 
 //Called by event polling when a MouseButtonPressed event is found
@@ -81,3 +124,25 @@ void Game::keyReleased(const sf::Event::KeyReleased* event)
 }
 
 
+void Game::newAnimal() 
+{
+	int passport_index = rand() % 3;
+	int animal_index = rand() % 3;
+
+	if (animal_index == passport_index)
+	{
+		should_accept = true;
+	}
+	else
+	{
+		should_accept = false;
+	}
+
+	character->setTexture(animals[animal_index], true);
+	character->setScale({1.8, 1.8});
+	character->setPosition(sf::Vector2f(window.getSize().x / 12, window.getSize().y / 12));
+
+	passport->setTexture(passports[passport_index], true);
+	passport->setScale({ 0.6, 0.6 });
+	passport->setPosition(sf::Vector2f(window.getSize().x / 2, window.getSize().y / 3));
+}
