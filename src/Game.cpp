@@ -65,7 +65,7 @@ bool Game::init()
 // use it for everything that needs to update between frames
 void Game::update(float dt)
 {
-
+	dragSprite(dragged);
 }
 
 // Runs after update, use it to tell the window what to draw this frame
@@ -87,7 +87,12 @@ void Game::mouseButtonPressed(const sf::Event::MouseButtonPressed* event)
 	// You can tell which button was pressed by comparing it to SFML's definitions of mouse buttons
 	if (event->button == sf::Mouse::Button::Left)
 	{
-		//Left mouse button was pressed
+		sf::Vector2f click = static_cast<sf::Vector2f>(event->position);
+		if (passport->getGlobalBounds().contains(click))
+		{
+			dragged = passport;
+			drag_offset = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window)) - passport->getGlobalBounds().position;
+		}
 	}
 }
 
@@ -97,7 +102,7 @@ void Game::mouseButtonReleased(const sf::Event::MouseButtonReleased* event)
 	//Works the same as MouseButtonPressed
 	if (event->button == sf::Mouse::Button::Left)
 	{
-		//Left mouse button was released
+		dragged = nullptr;
 	}
 }
 
@@ -105,9 +110,9 @@ void Game::mouseButtonReleased(const sf::Event::MouseButtonReleased* event)
 void Game::keyPressed(const sf::Event::KeyPressed* event)
 {
 	// You can tell which button was pressed by the scancode to SFML's definitions of keyboard keys
-	if (event->scancode == sf::Keyboard::Scancode::W)
+	if (event->scancode == sf::Keyboard::Scancode::Space)
 	{
-		// W was pressed
+		newAnimal();
 	}
 
 }
@@ -116,9 +121,9 @@ void Game::keyPressed(const sf::Event::KeyPressed* event)
 void Game::keyReleased(const sf::Event::KeyReleased* event)
 {
 	// Works the same way as KeyPressed
-	if (event->scancode == sf::Keyboard::Scancode::W)
+	if (event->scancode == sf::Keyboard::Scancode::Space)
 	{
-		// W was released
+		
 	}
 
 }
@@ -145,4 +150,18 @@ void Game::newAnimal()
 	passport->setTexture(passports[passport_index], true);
 	passport->setScale({ 0.6, 0.6 });
 	passport->setPosition(sf::Vector2f(window.getSize().x / 2, window.getSize().y / 3));
+}
+
+
+void Game::dragSprite(sf::Sprite* sprite) 
+{
+	if (sprite != nullptr)
+	{
+		sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
+		sf::Vector2f mouse_positionf = static_cast<sf::Vector2f>(mouse_position);
+
+		sf::Vector2f drag_position = mouse_positionf - drag_offset;
+		sprite->setPosition({ drag_position.x, drag_position.y });
+
+	}
 }

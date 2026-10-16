@@ -17,9 +17,18 @@ class Game
   void keyPressed(const sf::Event::KeyPressed* event);
   void keyReleased(const sf::Event::KeyReleased* event);
   void newAnimal();
+  void dragSprite(sf::Sprite* sprite);
 
   bool should_accept;
 
+  sf::Sprite* dragged = nullptr;
+  sf::Vector2f drag_offset;
+
+  //controlls
+  bool spaceKey = false;
+
+
+  //sprites/textures
   sf::Sprite* character;
   sf::Sprite* passport;
 
