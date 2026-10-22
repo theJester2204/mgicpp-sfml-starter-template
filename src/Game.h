@@ -18,8 +18,16 @@ class Game
   void keyReleased(const sf::Event::KeyReleased* event);
   void newAnimal();
   void dragSprite(sf::Sprite* sprite);
+  void acceptRejectMenu();
+  void acceptRejectFollow(sf::Sprite* sprite);
+  bool passportCheck();
 
-  bool should_accept;
+
+  bool accept_reject_menu_open = false;
+  bool show_accept_reject = false;
+
+  bool should_accept = false;
+  bool accepted = false;
 
   sf::Sprite* dragged = nullptr;
   sf::Vector2f drag_offset;
@@ -27,13 +35,24 @@ class Game
   //controlls
   bool spaceKey = false;
 
-
   //sprites/textures
   sf::Sprite* character;
   sf::Sprite* passport;
 
   sf::Texture* animals = new sf::Texture[3];
   sf::Texture* passports = new sf::Texture[3];
+
+  sf::Texture acceptOverlayTexture;
+  sf::Sprite acceptOverlay = sf::Sprite(acceptOverlayTexture);
+
+  sf::Texture rejectOverlayTexture;
+  sf::Sprite rejectOverlay = sf::Sprite(rejectOverlayTexture);
+
+  sf::Texture acceptTexture;
+  sf::Sprite acceptButton = sf::Sprite(acceptTexture);
+
+  sf::Texture rejectTexture;
+  sf::Sprite rejectButton = sf::Sprite(rejectTexture);
 
  private:
   sf::RenderWindow& window;

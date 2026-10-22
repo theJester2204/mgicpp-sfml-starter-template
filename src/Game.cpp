@@ -56,6 +56,30 @@ bool Game::init()
 	{
 		std::cout << "texture did not load \n";
 	}
+	//accept button
+	if (!acceptTexture.loadFromFile("../Data/Images/Critter Crossing/accept button.png"))
+	{
+		std::cout << "texture did not load \n";
+	}
+	acceptButton.setTexture(acceptTexture, true);
+	//reject button
+	if (!rejectTexture.loadFromFile("../Data/Images/Critter Crossing/reject button.png"))
+	{
+		std::cout << "texture did not load \n";
+	}
+	rejectButton.setTexture(rejectTexture, true);
+	//accept overlay
+	if (!acceptOverlayTexture.loadFromFile("../Data/Images/Critter Crossing/accept.png"))
+	{
+		std::cout << "texture did not load \n";
+	}
+	acceptOverlay.setTexture(acceptOverlayTexture, true);
+	//reject overlay
+	if (!rejectOverlayTexture.loadFromFile("../Data/Images/Critter Crossing/reject.png"))
+	{
+		std::cout << "texture did not load \n";
+	}
+	rejectOverlay.setTexture(rejectOverlayTexture, true);
 
 	newAnimal();
 	return true;
@@ -66,6 +90,7 @@ bool Game::init()
 void Game::update(float dt)
 {
 	dragSprite(dragged);
+	acceptRejectFollow(passport);
 }
 
 // Runs after update, use it to tell the window what to draw this frame
@@ -74,6 +99,22 @@ void Game::render()
 	window.draw(background);
 	window.draw(*character);
 	window.draw(*passport);
+	if (show_accept_reject)
+	{
+		if (accepted)
+		{
+			window.draw(acceptOverlay);
+		}
+		else 
+		{
+			window.draw(rejectOverlay);
+		}
+	}
+	if (accept_reject_menu_open)
+	{
+		window.draw(acceptButton);
+		window.draw(rejectButton);
+	}
 }
 
 //Called by event polling when a MouseButtonPressed event is found
@@ -93,6 +134,22 @@ void Game::mouseButtonPressed(const sf::Event::MouseButtonPressed* event)
 			dragged = passport;
 			drag_offset = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window)) - passport->getGlobalBounds().position;
 		}
+		if (acceptButton.getGlobalBounds().contains(click))
+		{
+			accepted = true;
+			show_accept_reject = true;
+		}
+		if (rejectButton.getGlobalBounds().contains(click))
+		{
+			accepted = false;
+			show_accept_reject = true;
+		}
+		accept_reject_menu_open = false;
+	}
+	if (event->button == sf::Mouse::Button::Right)
+	{
+		sf::Vector2f click = static_cast<sf::Vector2f>(event->position);
+		acceptRejectMenu();
 	}
 }
 
@@ -134,6 +191,8 @@ void Game::newAnimal()
 	int passport_index = rand() % 3;
 	int animal_index = rand() % 3;
 
+	show_accept_reject = false;
+
 	if (animal_index == passport_index)
 	{
 		should_accept = true;
@@ -157,11 +216,35 @@ void Game::dragSprite(sf::Sprite* sprite)
 {
 	if (sprite != nullptr)
 	{
-		sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
-		sf::Vector2f mouse_positionf = static_cast<sf::Vector2f>(mouse_position);
+		sf::Vector2f mouse_position = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
 
-		sf::Vector2f drag_position = mouse_positionf - drag_offset;
+		sf::Vector2f drag_position = mouse_position - drag_offset;
 		sprite->setPosition({ drag_position.x, drag_position.y });
 
 	}
+}
+
+void Game::acceptRejectMenu()
+{
+	accept_reject_menu_open = true;
+
+	sf::Vector2f mouse_position = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
+
+	acceptButton.setPosition({ mouse_position.x , mouse_position.y - 60 });
+	rejectButton.setPosition({ mouse_position.x , mouse_position.y + 60 });
+}
+
+void Game::acceptRejectFollow(sf::Sprite* sprite)
+{
+	acceptOverlay.setPosition({ sprite->getPosition().x + 30 , sprite->getPosition().y + 30 });
+	rejectOverlay.setPosition({ sprite->getPosition().x + 20 , sprite->getPosition().y + 40 });
+}
+
+bool Game::passportCheck() 
+{
+	if (should_accept == accepted)
+	{
+		return true;
+	}
+	return false;
 }
